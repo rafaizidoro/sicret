@@ -1,22 +1,29 @@
 [tool.poetry]
 name = "sicret"
-version = "0.1.1"
+version = "0.1.2"
 description = "What happens in secret, stays in sicret."
 authors = ["Rafael Izidoro <izidoro.rafa@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
 cryptography = "^41.0.7"
-
-[tool.poetry.scripts]
-sicret = 'sicret:main'
-
+websockets = "^12.0"
+textual = "^0.46.0"
+rich = "^13.7.0"
+typer = "^0.9.0"
+records = "^0.5.3"
+tomli = "^2.0.1"
+tomli-w = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.12.0"
 isort = "^5.13.1"
 flake8 = "^6.1.0"
+ipython = "^8.19.0"
+
+[tool.poetry.scripts]
+sicret = 'sicret.cli.main:app'
 
 [build-system]
 requires = ["poetry-core"]

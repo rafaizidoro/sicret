@@ -1,0 +1,2 @@
+def sicret():
+    return "sicret"
