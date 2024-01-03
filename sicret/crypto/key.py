@@ -1,7 +1,7 @@
 from dataclasses import asdict, dataclass
 from datetime import datetime
 
-from sicret.crypto.keyutils import decrypt_message, encrypt_message, generate_keys
+from sicret.crypto.keyutils import decrypt_data, encrypt_data, generate_keys
 from sicret.db.connection import Connection
 from sicret.utils import random_name
 
@@ -17,13 +17,13 @@ class Key:
     def dump(self):
         return asdict(self)
 
-    def encrypt(self, content, content_type='message'):
-        if content_type == 'message':
-            return self.encrypt_message(content)
+    def encrypt(self, content, content_type="message"):
+        if content_type == "message":
+            return encrypt_data(content)
 
-    def decrypt(self, content, content_type='message'):
-        if content_type == 'message':
-            return self.decrypt_message(content)
+    def decrypt(self, content, content_type="message"):
+        if content_type == "message":
+            return decrypt_data(content)
 
     def save(self, name=None):
         if not self.name:

@@ -1,33 +1,70 @@
-import socket
-import threading
+import asyncio
+
+import socketio
+from aioconsole import ainput
+
+sio = socketio.AsyncClient()
 
 
-class ChatClient:
-    def __init__(self, host="127.0.0.1", port=6969):
-        self.host = host
-        self.port = port
+@sio.event
+async def connect():
+    print("Connected to server")
+    asyncio.create_task(send_messages())
 
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((self.host, self.port))
 
-    def receive(self):
-        while True:  # making valid connection
-            try:
-                message = self.socket.recv(1024).decode("ascii")
-                print(message)
-            except:
-                print("An error occured!")
-                self.socket.close()
-                break
+@sio.event
+async def message(self, data):
+    print(data)
 
-    def write(self):
-        while True:
-            message = "{}: {}".format("U", input(""))
-            self.socket.send(message.encode("ascii"))
 
-    def run(self):
-        receive_thread = threading.Thread(target=self.receive)
-        receive_thread.start()
+@sio.event
+async def disconnect():
+    print("Disconnected from server")
 
-        write_thread = threading.Thread(target=self.write)
-        write_thread.start()
+
+async def send_messages():
+    while True:
+        message = await ainput("Your message: ")
+        await sio.send(message)
+
+
+async def start(host, port):
+    await sio.connect(f"http://{host}:{port}")
+    await sio.wait()
+
+
+def run_client(host, port):
+    asyncio.run(start(host, port))
+
+
+# import asyncio
+
+# import socketio
+# from aioconsole import ainput
+
+# sio = socketio.AsyncClient()
+
+# @sio.event
+# async def connect():
+#     print("Connected to server")
+#     asyncio.create_task(send_messages())
+
+# @sio.event
+# async def message(data):
+#     print(data)
+
+# @sio.event
+# async def disconnect():
+#     print("Disconnected from server")
+
+# async def send_messages():
+#     while True:
+#         message = await ainput("Your message: ")
+#         await sio.send(message)
+
+# async def main():
+#     await sio.connect('http://127.0.0.1:6969')
+#     await sio.wait()
+
+# if __name__ == '__main__':
+#     asyncio.run(main())

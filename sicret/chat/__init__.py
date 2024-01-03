@@ -1,2 +1,2 @@
-from .client import ChatClient
-from .server import ChatServer
+from .client import run_client
+from .server import run_server

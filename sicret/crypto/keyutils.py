@@ -30,34 +30,31 @@ def serialize(key, is_private=False):
         )
 
 
-
 def encrypt_data(public_key_str, message):
     """
     Encrypts the message using the provided public key string.
     """
-    public_key = serialization.load_pem_public_key(
-        public_key_str.encode('utf-8')
-    )
+    public_key = serialization.load_pem_public_key(public_key_str.encode("utf-8"))
 
     encrypted = public_key.encrypt(
-        message.encode('utf-8'),
+        message.encode("utf-8"),
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
-            label=None
-        )
+            label=None,
+        ),
     )
 
     # Return the encrypted data encoded in Base64
-    return base64.b64encode(encrypted).decode('utf-8')
+    return base64.b64encode(encrypted).decode("utf-8")
+
 
 def decrypt_data(private_key_str, encrypted_message):
     """
     Decrypts the encrypted message using the provided private key string.
     """
     private_key = serialization.load_pem_private_key(
-        private_key_str.encode('utf-8'),
-        password=None
+        private_key_str.encode("utf-8"), password=None
     )
 
     decrypted = private_key.decrypt(
@@ -65,8 +62,8 @@ def decrypt_data(private_key_str, encrypted_message):
         padding.OAEP(
             mgf=padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
-            label=None
-        )
+            label=None,
+        ),
     )
 
-    return decrypted.decode('utf-8')
+    return decrypted.decode("utf-8")

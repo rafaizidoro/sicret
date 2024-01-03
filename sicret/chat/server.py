@@ -1,47 +1,51 @@
-import socket
-import threading
+import eventlet
+import socketio
+
+sio = socketio.Server(cors_allowed_origins="*")
+app = socketio.WSGIApp(sio)
 
 
-class ChatServer:
-    def __init__(self, host="127.0.0.1", port=6969):
-        self.host = host
-        self.port = port
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.clients = []
-        self.rooms = {}
+@sio.event
+def connect(sid, environ):
+    print(f"Client connected: {sid}")
+    sio.emit("message", f"User {sid} has joined the chat.", skip_sid=sid)
 
-        self.socket.bind((self.host, self.port))
-        self.socket.listen()
 
-    def broadcast(self, message):
-        for client in self.clients:
-            client.send(message)
+@sio.event
+def message(sid, data):
+    print(f"Message from {sid}: {data}")
+    sio.emit("message", f"{sid}: {data}", skip_sid=sid)
 
-    def handle(self, client):
-        while True:
-            try:
-                message = client.recv(1024)
-                self.broadcast(message)
-            except:
-                index = self.clients.index(client)
-                self.clients.remove(client)
-                client.close()
-                # nickname = self.nicknames[index]
-                self.broadcast("{} left!".format("ddd").encode("ascii"))
-                # nicknames.remove(nickname)
-                break
 
-    def listen(self):
-        while True:
-            client, address = self.socket.accept()
-            print("Connected with {}".format(str(address)))
+@sio.event
+def disconnect(sid):
+    print(f"Client disconnected: {sid}")
 
-            # client.send("NICKNAME".encode("ascii"))
-            # nickname = client.recv(1024).decode("ascii")
-            # nicknames.append(nickname)
-            self.clients.append(client)
-            # print("Nickname is {}".format(nickname))
-            # broadcast("{} joined!".format(nickname).encode("ascii"))
-            client.send("Connected to server!".encode("ascii"))
-            thread = threading.Thread(target=self.handle, args=(client,))
-            thread.start()
+
+def start(host, port):
+    eventlet.wsgi.server(eventlet.listen((host, port)), app)
+
+
+def run_server(host="0.0.0.0", port=6969):
+    start(host, port)
+
+
+# import eventlet
+# import socketio
+
+# sio = socketio.Server(cors_allowed_origins='*')
+# app = socketio.WSGIApp(sio)
+
+# @sio.event
+# def connect(sid, environ):
+#     print(f"Client connected: {sid}")
+#     sio.emit('message', f"User {sid} has joined the chat.", skip_sid=sid)
+
+# @sio.event
+# def message(sid, data):
+#     print(f"Message from {sid}: {data}")
+#     sio.emit('message', f"{sid}: {data}", skip_sid=sid)
+
+# @sio.event
+# def disconnect(sid):
+#     print(f"Client disconnected: {sid}")

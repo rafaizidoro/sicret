@@ -2,7 +2,7 @@ from typing import Annotated, Optional
 
 import typer
 
-from sicret.chat import ChatClient, ChatServer
+from sicret.chat import run_client, run_server
 from sicret.config import Config
 
 app = typer.Typer()
@@ -23,8 +23,7 @@ def server(
 
     print(f"Starting server at {host}:{port}")
 
-    server = ChatServer(host=host, port=port)
-    server.listen()
+    run_server(host, port)
 
 
 @app.command()
@@ -42,5 +41,4 @@ def client(
 
     print(f"Connecting to {host}:{port}")
 
-    client = ChatClient(host=host, port=port)
-    client.run()
+    run_client(host, port)
